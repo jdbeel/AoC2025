@@ -1,25 +1,31 @@
-import System.Environment
-import Data.List
+import System.Environment ( getArgs )
+import Data.List ( mapAccumL )
 
 instructionToNumber :: ([Char], [Char]) -> Integer
 instructionToNumber ("L", x) = - (read x :: Integer)
 instructionToNumber ("R", x) = read x :: Integer
 
 splitInstruction :: [Char] -> ([Char], [Char])
-splitInstruction x = (take 1 x, drop 1 x)
+splitInstruction = splitAt 1
 
 executeLineA :: Integer -> [Char] -> (Integer, Integer)
 executeLineA currentVal line = (newVal, newVal) where
-    newVal = mod (currentVal + ((instructionToNumber . splitInstruction) line)) 100
+    newVal = mod (currentVal + (instructionToNumber . splitInstruction) line) 100
     
 executeFileA :: Integer -> [[Char]] -> Integer
-executeFileA initVal lines = toInteger $ length $ filter (\x -> x == 0) (snd $ mapAccumL executeLineA initVal lines)
+executeFileA initVal lines = toInteger $ length $ filter (== 0) (snd $ mapAccumL executeLineA initVal lines)
 
 executeLineB :: Integer -> [Char] -> (Integer, Integer)
-executeLineB currentVal line = (newVal, div absValue 100)
+executeLineB currentVal line = (newVal, numClicks)
     where newVal = fst $ executeLineA currentVal line
           diff = (instructionToNumber . splitInstruction) line
-          absValue = abs $ currentVal + diff
+          divisor
+            | diff < 0 = -100
+            | otherwise = 100
+          delta = currentVal + (diff `mod` divisor)
+          numClicks
+            | diff < 0 = (diff `div` divisor) + (toInteger . fromEnum) (delta < 0 && currentVal /= 0)
+            | otherwise = (diff `div` divisor) + (toInteger . fromEnum) (delta > 100)
 
 executeFileB :: Integer -> [[Char]] -> Integer
 executeFileB initVal lines = sum (snd $ mapAccumL executeLineB initVal lines)
@@ -28,19 +34,7 @@ main :: IO()
 main = do
     args <- getArgs
     content <- readFile (args !! 0)
-    -- let answerPartOne = executeFileA 50 $ lines content
-    -- putStrLn $ show answerPartOne
-    -- putStrLn $ show (executeLineA 10 "R990")
-    -- putStrLn $ show (executeLineB 10 "R990")
-    -- putStrLn $ show (executeLineB 82 "L30")
-    -- putStrLn $ show (executeLineB 52 "R48")
-    -- putStrLn $ show (executeLineB 0 "L5")
-    -- putStrLn $ show (executeLineB 95 "R60")
-    -- putStrLn $ show (executeLineB 55 "L55")
-    -- putStrLn $ show (executeLineB 0 "L1")
-    -- putStrLn $ show (executeLineB 99 "L99")
-    -- putStrLn $ show (executeLineB 0 "R14")
-    -- putStrLn $ show (executeLineB 14 "L82")
-    -- putStrLn $ show (executeLineB 50 "L1000")
+    let answerPartOne = executeFileA 50 $ lines content
     let answerPartTwo = executeFileB 50 $ lines content
-    putStrLn $ show answerPartTwo
+    putStrLn $ show answerPartOne ++ " " ++ show answerPartTwo
+    print $ answerPartOne + answerPartTwo
