@@ -4,8 +4,8 @@ import System.Environment
 import Data.Maybe
 import Text.Read
 
-isPalindrome :: Integer -> Bool
-isPalindrome x = left == right
+isRepeatedA :: Integer -> Bool
+isRepeatedA x = left == right
     where  digits = getDigits x
            (left, right) = splitAt (length digits `div` 2) digits
 
@@ -36,6 +36,6 @@ main = do
     content <- readFile (args !! 0)
 
     let processed = processInput content
-    let invalidIds = map (\x -> filter isPalindrome [fst x..snd x]) processed
+    let invalidIds = map (\x -> filter isRepeatedA [fst x..snd x]) processed
     -- print invalidIds -- Too many things to reasonably look at
     print $ (sum . concat) invalidIds
