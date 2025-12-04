@@ -41,5 +41,5 @@ main = do
 
     let processed = processInput content
     let invalidIds = map (\x -> filter isPalindrome [fst x..snd x]) processed
-    print invalidIds
+    -- print invalidIds -- Too many things to reasonably look at
     print $ (sum . concat) invalidIds
