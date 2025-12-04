@@ -4,10 +4,6 @@ import System.Environment
 import Data.Maybe
 import Text.Read
 
--- Get ith digit from an Integer, from the right
-getDigit :: Integer -> Integer -> Integer
-getDigit x i = x `div` (10 ^ i) `mod` 10
-
 isPalindrome :: Integer -> Bool
 isPalindrome x = left == right
     where  digits = getDigits x
