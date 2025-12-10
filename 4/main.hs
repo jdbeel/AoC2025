@@ -42,7 +42,9 @@ resultToMatrixLike mat = fromList (nrows mat) (ncols mat)
 
 removeRolls :: Matrix Int -> Matrix Int -> Matrix Int
 removeRolls = elementwiseUnsafe f
-    where f a b = if a == 1 && b == 1 then 0 else a
+    -- If both the source matrix andthe result matrix are 1 that means that the source
+    -- matrix has a roll at that pos and it was removed, so we set those cells to 0
+    where f a b = if a == 1 && b == 1 then 0 else a 
 
 recursiveCheck :: Matrix Int -> Int
 recursiveCheck mat
