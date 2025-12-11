@@ -27,10 +27,10 @@ sortRange (ll, lu) (rl, ru)
 
 mergeRanges :: [(Integer, Integer)] -> [(Integer, Integer)]
 mergeRanges = foldr f []
-    where f new@(xl, xu) acc@((yl, yu):ys) =
+    where f cur@(xl, xu) acc@((yl, yu):ys) =
             if yl <= xu
             then (xl, max yu xu):ys
-            else new:acc
+            else cur:acc
           f x acc = x:acc
 
 testRanges :: [(Integer, Integer)]
