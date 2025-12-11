@@ -16,11 +16,9 @@ checkId (ranges, prev) id
     | any (\(l, u) -> id >= l && id <= u) ranges = prev + 1
     | otherwise = prev + 0
 
-checkRange :: ([(Integer, Integer)], (Integer, Integer)) -> Bool
-checkRange (ranges, (l, u)) = any (\(rl, ru) -> l >= rl && u <= ru) ranges
 
-sortRange :: (Ord a1, Ord a2) => (a1, a2) -> (a1, a2) -> Ordering
-sortRange (ll, lu) (rl, ru)
+rangeOrdering :: (Ord a1, Ord a2) => (a1, a2) -> (a1, a2) -> Ordering
+rangeOrdering (ll, lu) (rl, ru)
     | ll < rl = LT
     | ll > rl = GT
     | otherwise = compare lu ru
@@ -33,10 +31,6 @@ mergeRanges = foldr f []
             else cur:acc
           f x acc = x:acc
 
-testRanges :: [(Integer, Integer)]
-testRanges = sortBy sortRange [(3,5), (10,14), (16,20), (12,18)]
-testIds = [1, 5, 8, 11, 17, 32]
-
 
 main :: IO()
 main = do
@@ -44,7 +38,7 @@ main = do
     content <- readFile (args !! 0)
 
     let lines' = lines content
-    let ranges = sortBy sortRange $ map stringToRange $ takeWhile (/= "") lines'
+    let ranges = sortBy rangeOrdering $ map stringToRange $ takeWhile (/= "") lines'
     let ids = map read $ drop (length ranges + 1) lines' :: [Integer]
     let resultPartOne = foldl' (curry checkId ranges) 0 ids
     print resultPartOne
